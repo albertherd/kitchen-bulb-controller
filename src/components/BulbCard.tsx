@@ -38,6 +38,27 @@ const PowerIcon = () => (
   </svg>
 );
 
+// Loading spinner
+const LoadingSpinner = () => (
+  <svg className="loading-spinner" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
+    <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round" />
+  </svg>
+);
+
+// Offline icon
+const OfflineIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="1" y1="1" x2="23" y2="23" />
+    <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55" />
+    <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39" />
+    <path d="M10.71 5.05A16 16 0 0 1 22.58 9" />
+    <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88" />
+    <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+    <line x1="12" y1="20" x2="12.01" y2="20" />
+  </svg>
+);
+
 // Get colors based on mode and value
 function getDialColors(mode: ControlMode, bulb: BulbState) {
   if (mode === 'temperature') {
@@ -99,14 +120,22 @@ export function BulbCard({
     return 'kelvin';
   };
 
+  // Determine card state
+  const isDisabled = !bulb.isOnline || bulb.isLoading;
+  const showLoading = bulb.isLoading;
+  const showOffline = !bulb.isOnline && !bulb.isLoading;
+
   return (
-    <div className={`bulb-card ${!bulb.isOn ? 'bulb-card--off' : ''} ${bulb.isPending ? 'bulb-card--pending' : ''}`}>
+    <div className={`bulb-card ${!bulb.isOn ? 'bulb-card--off' : ''} ${bulb.isPending ? 'bulb-card--pending' : ''} ${showOffline ? 'bulb-card--offline' : ''} ${showLoading ? 'bulb-card--loading' : ''}`}>
       <div className="bulb-card__header">
         <span className="bulb-card__name">{bulb.name}</span>
+        {showOffline && <span className="bulb-card__status">Offline</span>}
+        {showLoading && <span className="bulb-card__status">Connecting...</span>}
         <div className="bulb-card__actions">
           <button 
             className={`bulb-card__link-btn ${bulb.isLinked ? 'bulb-card__link-btn--active' : ''}`}
             onClick={onToggleLink}
+            disabled={isDisabled}
             title={bulb.isLinked ? 'Unlink from group' : 'Link to group'}
             aria-label={bulb.isLinked ? 'Unlink from group' : 'Link to group'}
           >
@@ -115,6 +144,7 @@ export function BulbCard({
           <button 
             className={`bulb-card__power-btn ${bulb.isOn ? 'bulb-card__power-btn--on' : ''}`}
             onClick={onTogglePower}
+            disabled={isDisabled}
             title={bulb.isOn ? 'Turn off' : 'Turn on'}
             aria-label={bulb.isOn ? 'Turn off' : 'Turn on'}
           >
@@ -124,16 +154,27 @@ export function BulbCard({
       </div>
       
       <div className="bulb-card__dial">
-        <Dial
-          value={dialValue}
-          onChange={onDialChange}
-          disabled={!bulb.isOn}
-          displayValue={getDisplayValue()}
-          label={getDisplayLabel()}
-          colorStart={colors.colorStart}
-          colorEnd={colors.colorEnd}
-          glowColor={colors.glowColor}
-        />
+        {showLoading ? (
+          <div className="bulb-card__loading">
+            <LoadingSpinner />
+          </div>
+        ) : showOffline ? (
+          <div className="bulb-card__offline">
+            <OfflineIcon />
+            <span>Not reachable</span>
+          </div>
+        ) : (
+          <Dial
+            value={dialValue}
+            onChange={onDialChange}
+            disabled={!bulb.isOn}
+            displayValue={getDisplayValue()}
+            label={getDisplayLabel()}
+            colorStart={colors.colorStart}
+            colorEnd={colors.colorEnd}
+            glowColor={colors.glowColor}
+          />
+        )}
       </div>
       
       {bulb.isPending && (

@@ -9,24 +9,106 @@ interface PendingUpdate {
   isOn?: boolean;
 }
 
+// Polling interval for offline bulbs (ms)
+const OFFLINE_POLL_INTERVAL = 5000;
+
 export function useBulbController() {
   const [bulbs, setBulbs] = useState<BulbState[]>(() => 
     DEFAULT_BULBS.map(b => ({
       ...b,
       brightness: 50,
       temperature: 4000,
-      isOn: true,
+      isOn: false,
       isLinked: true,
       isPending: false,
+      isOnline: false,
+      isLoading: true,  // Start in loading state
     }))
   );
   
   const [mode, setMode] = useState<ControlMode>('brightness');
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   
   // Track pending updates per bulb for debouncing
   const pendingUpdates = useRef<Map<string, PendingUpdate>>(new Map());
   const debounceTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const inFlightRequests = useRef<Set<string>>(new Set());
+  const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Fetch status for a single bulb
+  const fetchBulbStatus = useCallback(async (bulbId: string, ip: string) => {
+    try {
+      const status = await api.getStatus(ip);
+      
+      setBulbs(prev => prev.map(b => {
+        if (b.id !== bulbId) return b;
+        
+        if (status.online) {
+          return {
+            ...b,
+            brightness: status.brightness,
+            temperature: status.temp,
+            isOn: status.ison,
+            isOnline: true,
+            isLoading: false,
+          };
+        } else {
+          return {
+            ...b,
+            isOnline: false,
+            isLoading: false,
+          };
+        }
+      }));
+      
+      return status.online;
+    } catch {
+      setBulbs(prev => prev.map(b => 
+        b.id === bulbId ? { ...b, isOnline: false, isLoading: false } : b
+      ));
+      return false;
+    }
+  }, []);
+
+  // Fetch initial status for all bulbs on mount
+  useEffect(() => {
+    async function fetchAllStatuses() {
+      console.log('[BulbController] Fetching initial status for all bulbs...');
+      
+      await Promise.all(
+        DEFAULT_BULBS.map(bulb => fetchBulbStatus(bulb.id, bulb.ip))
+      );
+      
+      setInitialLoadComplete(true);
+      console.log('[BulbController] Initial status fetch complete');
+    }
+    
+    fetchAllStatuses();
+  }, [fetchBulbStatus]);
+
+  // Poll for offline bulbs
+  useEffect(() => {
+    if (!initialLoadComplete) return;
+    
+    pollIntervalRef.current = setInterval(() => {
+      setBulbs(currentBulbs => {
+        // Check offline bulbs
+        currentBulbs.forEach(bulb => {
+          if (!bulb.isOnline && !bulb.isLoading) {
+            console.log(`[BulbController] Polling offline bulb: ${bulb.name}`);
+            fetchBulbStatus(bulb.id, bulb.ip);
+          }
+        });
+        return currentBulbs;
+      });
+    }, OFFLINE_POLL_INTERVAL);
+    
+    return () => {
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+      }
+    };
+  }, [initialLoadComplete, fetchBulbStatus]);
 
   // Send API request for a bulb
   const sendUpdate = useCallback(async (bulbId: string) => {

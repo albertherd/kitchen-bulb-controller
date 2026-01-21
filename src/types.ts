@@ -7,6 +7,8 @@ export interface BulbState {
   isOn: boolean;
   isLinked: boolean;
   isPending: boolean;      // API request in flight
+  isOnline: boolean;       // Device reachable
+  isLoading: boolean;      // Initial status fetch in progress
 }
 
 export type ControlMode = 'brightness' | 'temperature';

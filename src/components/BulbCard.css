@@ -45,6 +45,14 @@
   opacity: 0.85;
 }
 
+.bulb-card--offline {
+  opacity: 0.5;
+}
+
+.bulb-card--loading {
+  opacity: 0.7;
+}
+
 .bulb-card__header {
   display: flex;
   align-items: center;
@@ -58,6 +66,19 @@
   font-weight: 500;
   color: rgba(255, 255, 255, 0.9);
   letter-spacing: 0.3px;
+}
+
+.bulb-card__status {
+  font-size: 9px;
+  font-weight: 500;
+  color: rgba(255, 150, 100, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: 8px;
+}
+
+.bulb-card--offline .bulb-card__status {
+  color: rgba(255, 100, 100, 0.8);
 }
 
 .bulb-card--off .bulb-card__name {
@@ -83,8 +104,14 @@
   transition: all 0.2s ease;
 }
 
-.bulb-card__link-btn:active,
-.bulb-card__power-btn:active {
+.bulb-card__link-btn:disabled,
+.bulb-card__power-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.bulb-card__link-btn:active:not(:disabled),
+.bulb-card__power-btn:active:not(:disabled) {
   transform: scale(0.95);
 }
 
@@ -106,6 +133,33 @@
   align-items: center;
   justify-content: center;
   padding: 0;
+  min-height: 120px;
+}
+
+.bulb-card__loading,
+.bulb-card__offline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.4);
+  height: 120px;
+}
+
+.bulb-card__offline span {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .bulb-card__pending-indicator {

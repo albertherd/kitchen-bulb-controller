@@ -6,10 +6,22 @@ interface LightParams {
   temp?: number;
 }
 
-interface BulbStatus {
+export interface BulbStatus {
   ison: boolean;
   brightness: number;
   temp: number;
+  online: boolean;
+  error?: string;
+}
+
+// Simulated state for each bulb (persists during session)
+const simulatedState: Map<string, { ison: boolean; brightness: number; temp: number }> = new Map();
+
+function getSimulatedState(ip: string) {
+  if (!simulatedState.has(ip)) {
+    simulatedState.set(ip, { ison: true, brightness: 50, temp: 4000 });
+  }
+  return simulatedState.get(ip)!;
 }
 
 /**
@@ -19,7 +31,11 @@ interface BulbStatus {
 export async function setLight(ip: string, params: LightParams): Promise<void> {
   if (SIMULATE_MODE) {
     console.log(`[SIMULATE] setLight(${ip}):`, params);
-    // Simulate network delay
+    const state = getSimulatedState(ip);
+    if (params.turn === 'on') state.ison = true;
+    if (params.turn === 'off') state.ison = false;
+    if (params.brightness !== undefined) state.brightness = params.brightness;
+    if (params.temp !== undefined) state.temp = params.temp;
     await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 200));
     return;
   }
@@ -55,45 +71,74 @@ export async function setLight(ip: string, params: LightParams): Promise<void> {
 
 /**
  * Get current status of a Shelly bulb
+ * Returns online: false if device is unreachable
  */
-export async function getStatus(ip: string): Promise<BulbStatus> {
+export async function getStatus(ip: string, timeout = 5000): Promise<BulbStatus> {
   if (SIMULATE_MODE) {
     console.log(`[SIMULATE] getStatus(${ip})`);
     await new Promise(resolve => setTimeout(resolve, 50 + Math.random() * 100));
+    const state = getSimulatedState(ip);
     return {
-      ison: true,
-      brightness: 50,
-      temp: 4000,
+      ison: state.ison,
+      brightness: state.brightness,
+      temp: state.temp,
+      online: true,
     };
   }
 
   const url = `http://${ip}/status`;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
   
   try {
     const response = await fetch(url, {
       method: 'GET',
       mode: 'cors',
+      signal: controller.signal,
     });
     
+    clearTimeout(timeoutId);
+    
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+      return {
+        ison: false,
+        brightness: 0,
+        temp: 4000,
+        online: false,
+        error: `HTTP ${response.status}`,
+      };
     }
     
     const data = await response.json();
     const light = data.lights?.[0];
     
     if (!light) {
-      throw new Error('No light data in response');
+      return {
+        ison: false,
+        brightness: 0,
+        temp: 4000,
+        online: false,
+        error: 'No light data in response',
+      };
     }
     
     return {
       ison: light.ison,
       brightness: light.brightness,
       temp: light.temp,
+      online: true,
     };
   } catch (error) {
-    console.error(`Failed to get status from ${ip}:`, error);
-    throw error;
+    clearTimeout(timeoutId);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`Failed to get status from ${ip}:`, errorMessage);
+    return {
+      ison: false,
+      brightness: 0,
+      temp: 4000,
+      online: false,
+      error: errorMessage,
+    };
   }
 }
 
