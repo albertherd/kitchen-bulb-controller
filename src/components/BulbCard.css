@@ -1,0 +1,147 @@
+.bulb-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 12px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  transition: all 0.3s ease;
+}
+
+.bulb-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 28px;
+  background: radial-gradient(
+    ellipse 80% 60% at 50% 0%,
+    rgba(255, 255, 255, 0.04) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+}
+
+.bulb-card--off {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.025) 0%,
+    rgba(255, 255, 255, 0.01) 100%
+  );
+  border-color: rgba(255, 255, 255, 0.03);
+}
+
+.bulb-card--pending {
+  opacity: 0.85;
+}
+
+.bulb-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+.bulb-card__name {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.3px;
+}
+
+.bulb-card--off .bulb-card__name {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.bulb-card__actions {
+  display: flex;
+  gap: 6px;
+}
+
+.bulb-card__link-btn,
+.bulb-card__power-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.2s ease;
+}
+
+.bulb-card__link-btn:active,
+.bulb-card__power-btn:active {
+  transform: scale(0.95);
+}
+
+.bulb-card__link-btn--active {
+  color: rgba(120, 180, 255, 0.9);
+  background: rgba(120, 180, 255, 0.1);
+  border-color: rgba(120, 180, 255, 0.2);
+}
+
+.bulb-card__power-btn--on {
+  color: rgba(120, 255, 160, 0.9);
+  background: rgba(120, 255, 160, 0.1);
+  border-color: rgba(120, 255, 160, 0.15);
+  box-shadow: 0 0 20px rgba(120, 255, 160, 0.15);
+}
+
+.bulb-card__dial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.bulb-card__pending-indicator {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffb464, #ff8a50);
+  box-shadow: 0 0 10px rgba(255, 180, 100, 0.6);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.85);
+  }
+}
+
+/* Landscape mode adjustments */
+@media (orientation: landscape) {
+  .bulb-card {
+    padding: 10px 8px;
+  }
+  
+  .bulb-card__header {
+    margin-bottom: 4px;
+  }
+  
+  .bulb-card__name {
+    font-size: 11px;
+  }
+}

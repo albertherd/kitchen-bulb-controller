@@ -1,0 +1,123 @@
+.app {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.app__simulate-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 6px 12px;
+  background: linear-gradient(90deg, rgba(255, 149, 0, 0.9), rgba(255, 94, 58, 0.9));
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+}
+
+.app__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 16px 12px;
+  padding-top: max(20px, env(safe-area-inset-top));
+}
+
+.app__simulate-banner ~ .app__header {
+  padding-top: calc(max(20px, env(safe-area-inset-top)) + 24px);
+}
+
+.app__title {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.app__main {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 16px 20px;
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
+  -webkit-overflow-scrolling: touch;
+}
+
+.app__grid {
+  display: grid;
+  gap: 12px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Portrait mode (phone held vertically) - 2x2 grid */
+@media (orientation: portrait) {
+  .app__grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+  }
+}
+
+/* Landscape mode (phone held horizontally) - 4x1 row */
+@media (orientation: landscape) {
+  .app {
+    flex-direction: column;
+  }
+  
+  .app__header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 16px;
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+    gap: 12px;
+  }
+  
+  .app__main {
+    flex: 1;
+    padding: 4px 12px;
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+    padding-bottom: max(4px, env(safe-area-inset-bottom));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .app__grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    width: 100%;
+    max-width: none;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 768px) and (orientation: portrait) {
+  .app__grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 480px;
+  }
+}
+
+/* Large tablet / desktop */
+@media (min-width: 1024px) {
+  .app__grid {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 900px;
+  }
+}

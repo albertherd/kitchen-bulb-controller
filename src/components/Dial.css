@@ -1,0 +1,105 @@
+.dial {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  cursor: pointer;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  /* Prevent clipping of knob on edges */
+  overflow: visible;
+  padding: 4px;
+  margin: -4px;
+}
+
+.dial--disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Outer glow ring */
+.dial__glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--dial-glow, rgba(255, 180, 100, 0.15)) 0%, transparent 70%);
+  filter: blur(15px);
+  opacity: var(--dial-intensity, 0.5);
+  transition: opacity 0.3s ease, background 0.3s ease;
+  pointer-events: none;
+}
+
+.dial--disabled .dial__glow {
+  opacity: 0;
+}
+
+.dial__track {
+  stroke: rgba(255, 255, 255, 0.06);
+}
+
+.dial__progress {
+  stroke: url(#dialGradient);
+  filter: drop-shadow(0 0 8px var(--dial-glow, rgba(255, 180, 100, 0.4)));
+  transition: filter 0.3s ease;
+}
+
+.dial--disabled .dial__progress {
+  stroke: rgba(255, 255, 255, 0.15);
+  filter: none;
+}
+
+.dial__knob {
+  fill: #ffffff;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
+  transition: transform 0.1s ease;
+}
+
+.dial:active .dial__knob {
+  transform: scale(1.15);
+}
+
+.dial__knob-inner {
+  fill: var(--dial-color, #ffb464);
+  transition: fill 0.3s ease;
+}
+
+.dial--disabled .dial__knob-inner {
+  fill: rgba(255, 255, 255, 0.3);
+}
+
+.dial__content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.dial__value {
+  font-size: 24px;
+  font-weight: 300;
+  color: #ffffff;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
+.dial--disabled .dial__value {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.dial__label {
+  font-size: 9px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.35);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
