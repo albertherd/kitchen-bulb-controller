@@ -1,6 +1,7 @@
 import { useBulbController } from './hooks/useBulbController';
 import { BulbCard } from './components/BulbCard';
 import { ModeToggle } from './components/ModeToggle';
+import { PowerToggle } from './components/PowerToggle';
 import { SIMULATE_MODE } from './config';
 import './App.css';
 
@@ -13,6 +14,8 @@ function App() {
     setValue,
     togglePower,
     toggleLink,
+    isAnyOn,
+    setAllPower,
   } = useBulbController();
 
   return (
@@ -24,6 +27,7 @@ function App() {
       )}
       
       <header className="app__header">
+        <PowerToggle isOn={isAnyOn} onToggle={setAllPower} />
         <h1 className="app__title">Lights</h1>
         <ModeToggle mode={mode} onToggle={toggleMode} />
       </header>

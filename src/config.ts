@@ -13,10 +13,10 @@ export const DEBOUNCE_DELAY = 250;
 // Default bulb configuration
 // Update these IPs to match your network setup
 export const DEFAULT_BULBS = [
-  { id: 'bulb-1', name: 'Bulb 1', ip: '192.168.4.160' },
-  { id: 'bulb-2', name: 'Bulb 2', ip: '192.168.4.161' },
-  { id: 'bulb-3', name: 'Bulb 3', ip: '192.168.4.162' },
-  { id: 'bulb-4', name: 'Bulb 4', ip: '192.168.4.163' },
+  { id: 'bulb-1', name: 'Sink', ip: '192.168.4.160' },
+  { id: 'bulb-2', name: 'Frames', ip: '192.168.4.161' },
+  { id: 'bulb-3', name: 'Bieb', ip: '192.168.4.162' },
+  { id: 'bulb-4', name: 'Fridge', ip: '192.168.4.163' },
 ];
 
 // Local storage key for persisting bulb IPs

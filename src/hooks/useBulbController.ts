@@ -291,6 +291,30 @@ export function useBulbController() {
     setMode(prev => prev === 'brightness' ? 'temperature' : 'brightness');
   }, []);
 
+  // Check if any bulb is on (for global power state)
+  const isAnyOn = bulbs.some(b => b.isOnline && b.isOn);
+
+  // Global power: turn all online bulbs on or off
+  const setAllPower = useCallback((turnOn: boolean) => {
+    setBulbs(prev => prev.map(bulb => {
+      if (!bulb.isOnline) return bulb;
+      
+      if (turnOn) {
+        // Turn on at 80% brightness, keep current temperature
+        const newBrightness = 80;
+        scheduleUpdate(bulb.id, { 
+          isOn: true, 
+          brightness: newBrightness, 
+          temperature: bulb.temperature 
+        });
+        return { ...bulb, isOn: true, brightness: newBrightness };
+      } else {
+        scheduleUpdate(bulb.id, { isOn: false });
+        return { ...bulb, isOn: false };
+      }
+    }));
+  }, [scheduleUpdate]);
+
   // Get value based on current mode
   const getValue = useCallback((bulb: BulbState): number => {
     if (mode === 'brightness') {
@@ -326,5 +350,7 @@ export function useBulbController() {
     setValue,
     togglePower,
     toggleLink,
+    isAnyOn,
+    setAllPower,
   };
 }
