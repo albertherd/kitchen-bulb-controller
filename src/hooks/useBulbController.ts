@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { BulbState, ControlMode } from '../types';
 import { DEFAULT_BULBS, DEBOUNCE_DELAY, TEMP_MIN, TEMP_MAX } from '../config';
 import * as api from '../api/shellyApi';
+import { waitForProxyCheck } from '../api/proxyService';
 
 interface PendingUpdate {
   brightness?: number;
@@ -73,6 +74,13 @@ export function useBulbController() {
   // Fetch initial status for all bulbs on mount
   useEffect(() => {
     async function fetchAllStatuses() {
+      console.log('[BulbController] Waiting for proxy check...');
+      
+      // Wait for proxy health check to complete before fetching bulb statuses
+      // This ensures we know whether to route through proxy or direct
+      const proxyOnline = await waitForProxyCheck();
+      console.log(`[BulbController] Proxy check complete. Online: ${proxyOnline}`);
+      
       console.log('[BulbController] Fetching initial status for all bulbs...');
       
       await Promise.all(

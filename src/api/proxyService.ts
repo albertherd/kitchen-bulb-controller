@@ -5,6 +5,7 @@ export type ProxyStatus = 'checking' | 'online' | 'offline';
 // Singleton state for proxy status
 let proxyStatus: ProxyStatus = 'checking';
 let proxyCheckPromise: Promise<boolean> | null = null;
+let initialCheckPromise: Promise<boolean> | null = null;
 let lastCheckTime = 0;
 
 // Listeners for status changes
@@ -58,6 +59,7 @@ export async function checkProxyHealth(): Promise<boolean> {
       proxyStatus = isOnline ? 'online' : 'offline';
       lastCheckTime = Date.now();
       notifyListeners();
+      console.log(`[Proxy] Health check result: ${proxyStatus}`);
       return isOnline;
     } catch (error) {
       clearTimeout(timeoutId);
@@ -94,8 +96,8 @@ export function isProxyOnline(): boolean {
 let recheckIntervalId: ReturnType<typeof setInterval> | null = null;
 
 export function startProxyMonitoring(): void {
-  // Initial check
-  checkProxyHealth();
+  // Initial check - store the promise so others can await it
+  initialCheckPromise = checkProxyHealth();
 
   // Set up periodic re-checks when offline
   if (recheckIntervalId) {
@@ -108,6 +110,18 @@ export function startProxyMonitoring(): void {
       checkProxyHealth();
     }
   }, PROXY_CONFIG.recheckInterval);
+}
+
+/**
+ * Wait for the initial proxy health check to complete
+ * Call this before making any bulb requests to ensure proxy status is known
+ */
+export async function waitForProxyCheck(): Promise<boolean> {
+  if (initialCheckPromise) {
+    return initialCheckPromise;
+  }
+  // If monitoring hasn't started, do a check now
+  return checkProxyHealth();
 }
 
 export function stopProxyMonitoring(): void {
@@ -124,13 +138,18 @@ export function stopProxyMonitoring(): void {
  * @returns The full URL to use for the request
  */
 export function buildBulbUrl(ip: string, path: string): string {
-  if (isProxyOnline()) {
+  const useProxy = isProxyOnline();
+  if (useProxy) {
     // Use the generic proxy route which works for any IP
     // Format: https://<proxy>/proxy/<bulb-ip>/<path>
     const cleanPath = path.startsWith('/') ? path : `/${path}`;
-    return `https://${PROXY_CONFIG.host}:${PROXY_CONFIG.port}/proxy/${ip}${cleanPath}`;
+    const url = `https://${PROXY_CONFIG.host}:${PROXY_CONFIG.port}/proxy/${ip}${cleanPath}`;
+    console.log(`[Proxy] Routing through proxy: ${url}`);
+    return url;
   } else {
     // Direct connection (only works on platforms that allow HTTP)
-    return `http://${ip}${path.startsWith('/') ? path : `/${path}`}`;
+    const url = `http://${ip}${path.startsWith('/') ? path : `/${path}`}`;
+    console.log(`[Proxy] Direct connection (proxy ${proxyStatus}): ${url}`);
+    return url;
   }
 }
