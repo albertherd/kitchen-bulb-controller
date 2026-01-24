@@ -35,6 +35,34 @@
   padding-top: max(16px, env(safe-area-inset-top));
 }
 
+/* Subtle proxy status indicator - a tiny dot between the controls */
+.app__proxy-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  transition: all 0.5s ease;
+  flex-shrink: 0;
+}
+
+.app__proxy-indicator--online {
+  background: rgba(52, 199, 89, 0.8);
+  box-shadow: 0 0 4px rgba(52, 199, 89, 0.5);
+}
+
+.app__proxy-indicator--offline {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.app__proxy-indicator--checking {
+  background: rgba(255, 204, 0, 0.6);
+  animation: pulse-check 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-check {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
 .app__simulate-banner ~ .app__header {
   padding-top: calc(max(16px, env(safe-area-inset-top)) + 24px);
 }

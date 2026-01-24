@@ -1,8 +1,10 @@
+import { useEffect, useState } from 'react';
 import { useBulbController } from './hooks/useBulbController';
 import { BulbCard } from './components/BulbCard';
 import { ModeToggle } from './components/ModeToggle';
 import { PowerToggle } from './components/PowerToggle';
 import { SIMULATE_MODE } from './config';
+import { startProxyMonitoring, stopProxyMonitoring, subscribeToProxyStatus, ProxyStatus } from './api/proxyService';
 import './App.css';
 
 function App() {
@@ -18,6 +20,18 @@ function App() {
     setAllPower,
   } = useBulbController();
 
+  const [proxyStatus, setProxyStatus] = useState<ProxyStatus>('checking');
+
+  // Start proxy monitoring on mount
+  useEffect(() => {
+    startProxyMonitoring();
+    const unsubscribe = subscribeToProxyStatus(setProxyStatus);
+    return () => {
+      stopProxyMonitoring();
+      unsubscribe();
+    };
+  }, []);
+
   return (
     <div className="app">
       {SIMULATE_MODE && (
@@ -28,6 +42,10 @@ function App() {
       
       <header className="app__header">
         <PowerToggle isOn={isAnyOn} onToggle={setAllPower} />
+        <div 
+          className={`app__proxy-indicator app__proxy-indicator--${proxyStatus}`}
+          title={proxyStatus === 'online' ? 'Routed via Pi' : proxyStatus === 'checking' ? 'Checking proxy...' : 'Direct connection'}
+        />
         <ModeToggle mode={mode} onToggle={toggleMode} />
       </header>
       

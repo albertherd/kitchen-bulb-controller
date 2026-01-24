@@ -21,3 +21,21 @@ export const DEFAULT_BULBS = [
 
 // Local storage key for persisting bulb IPs
 export const STORAGE_KEY = 'bulb-controller-config';
+
+// Raspberry Pi Proxy Configuration
+// The proxy allows HTTPS requests to be forwarded to HTTP Shelly bulbs
+// This is required for iOS which blocks mixed content (HTTPS -> HTTP)
+export const PROXY_CONFIG = {
+  // Enable/disable proxy feature entirely
+  enabled: true,
+  // Domain pointing to your Raspberry Pi (uses Let's Encrypt cert)
+  host: 'bulb.bozoz.lol',
+  // HTTPS port (443 is standard)
+  port: 443,
+  // Health check endpoint to verify proxy is online
+  healthEndpoint: '/health',
+  // How long to wait for proxy health check (ms)
+  healthTimeout: 2000,
+  // How often to re-check proxy availability when offline (ms)
+  recheckInterval: 30000,
+};

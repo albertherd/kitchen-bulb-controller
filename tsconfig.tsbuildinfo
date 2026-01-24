@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/config.ts","./src/main.tsx","./src/types.ts","./src/vite-env.d.ts","./src/api/proxyservice.ts","./src/api/shellyapi.ts","./src/components/bulbcard.tsx","./src/components/dial.tsx","./src/components/modetoggle.tsx","./src/components/powertoggle.tsx","./src/hooks/usebulbcontroller.ts"],"version":"5.6.3"}

@@ -1,4 +1,5 @@
 import { SIMULATE_MODE } from '../config';
+import { buildBulbUrl } from './proxyService';
 
 interface LightParams {
   turn?: 'on' | 'off';
@@ -27,6 +28,7 @@ function getSimulatedState(ip: string) {
 /**
  * Set light parameters on a Shelly bulb
  * Uses GET request to /light/0 endpoint
+ * Automatically routes through proxy if available
  */
 export async function setLight(ip: string, params: LightParams): Promise<void> {
   if (SIMULATE_MODE) {
@@ -52,7 +54,7 @@ export async function setLight(ip: string, params: LightParams): Promise<void> {
     searchParams.set('temp', String(Math.round(params.temp)));
   }
 
-  const url = `http://${ip}/light/0?${searchParams.toString()}`;
+  const url = buildBulbUrl(ip, `/light/0?${searchParams.toString()}`);
   
   try {
     const response = await fetch(url, {
@@ -72,6 +74,7 @@ export async function setLight(ip: string, params: LightParams): Promise<void> {
 /**
  * Get current status of a Shelly bulb
  * Returns online: false if device is unreachable
+ * Automatically routes through proxy if available
  */
 export async function getStatus(ip: string, timeout = 5000): Promise<BulbStatus> {
   if (SIMULATE_MODE) {
@@ -86,7 +89,7 @@ export async function getStatus(ip: string, timeout = 5000): Promise<BulbStatus>
     };
   }
 
-  const url = `http://${ip}/status`;
+  const url = buildBulbUrl(ip, '/status');
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
   
