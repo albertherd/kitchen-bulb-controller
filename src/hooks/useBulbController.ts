@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { BulbState, ControlMode } from '../types';
+import { BulbState, ControlMode, PresetConfig } from '../types';
 import { DEFAULT_BULBS, DEBOUNCE_DELAY, TEMP_MIN, TEMP_MAX } from '../config';
 import * as api from '../api/shellyApi';
 import { waitForProxyCheck } from '../api/proxyService';
@@ -323,6 +323,40 @@ export function useBulbController() {
     }));
   }, [scheduleUpdate]);
 
+  const applyPreset = useCallback((preset: PresetConfig) => {
+    setBulbs(prev => prev.map(bulb => {
+      const action = preset.actions.find(item => item.bulbId === bulb.id);
+      if (!action || !bulb.isOnline) {
+        return bulb;
+      }
+
+      const brightness = action.brightness !== undefined
+        ? Math.max(0, Math.min(100, action.brightness))
+        : bulb.brightness;
+      const temperature = action.temperature !== undefined
+        ? Math.max(TEMP_MIN, Math.min(TEMP_MAX, action.temperature))
+        : bulb.temperature;
+      const isOn = action.isOn !== undefined ? action.isOn : bulb.isOn;
+
+      if (isOn) {
+        scheduleUpdate(bulb.id, {
+          isOn: true,
+          brightness,
+          temperature,
+        });
+      } else {
+        scheduleUpdate(bulb.id, { isOn: false });
+      }
+
+      return {
+        ...bulb,
+        brightness,
+        temperature,
+        isOn,
+      };
+    }));
+  }, [scheduleUpdate]);
+
   // Get value based on current mode
   const getValue = useCallback((bulb: BulbState): number => {
     if (mode === 'brightness') {
@@ -360,5 +394,6 @@ export function useBulbController() {
     toggleLink,
     isAnyOn,
     setAllPower,
+    applyPreset,
   };
 }

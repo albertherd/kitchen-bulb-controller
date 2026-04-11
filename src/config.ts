@@ -17,6 +17,8 @@ export const DEFAULT_BULBS = [
   { id: 'bulb-2', name: 'Frames', ip: '192.168.4.161' },
   { id: 'bulb-3', name: 'Bieb', ip: '192.168.4.162' },
   { id: 'bulb-4', name: 'Fridge', ip: '192.168.4.163' },
+  { id: 'bulb-5', name: 'Pingu', ip: '192.168.4.164' },
+  { id: 'bulb-6', name: 'AC', ip: '192.168.4.165' },
 ];
 
 // Local storage key for persisting bulb IPs

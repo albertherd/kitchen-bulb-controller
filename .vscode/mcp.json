@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "bulb-controller": {
+      "command": "node",
+      "args": ["/Users/albert/bulb-controller/mcp-server/dist/index.js"]
+    }
+  }
+}

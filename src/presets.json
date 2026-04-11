@@ -1,0 +1,80 @@
+[
+  {
+    "id": "preset-evening",
+    "name": "Evening",
+    "description": "Warm and relaxed",
+    "actions": [
+      { "bulbId": "bulb-1", "isOn": true, "brightness": 55, "temperature": 3000 },
+      { "bulbId": "bulb-2", "isOn": true, "brightness": 45, "temperature": 3000 },
+      { "bulbId": "bulb-3", "isOn": true, "brightness": 40, "temperature": 2900 },
+      { "bulbId": "bulb-4", "isOn": true, "brightness": 50, "temperature": 3000 },
+      { "bulbId": "bulb-5", "isOn": true, "brightness": 40, "temperature": 2900 },
+      { "bulbId": "bulb-6", "isOn": true, "brightness": 40, "temperature": 2900 }
+    ]
+  },
+  {
+    "id": "preset-focus",
+    "name": "Focus",
+    "description": "Bright cool light",
+    "actions": [
+      { "bulbId": "bulb-1", "isOn": true, "brightness": 90, "temperature": 5600 },
+      { "bulbId": "bulb-2", "isOn": true, "brightness": 90, "temperature": 5600 },
+      { "bulbId": "bulb-3", "isOn": true, "brightness": 85, "temperature": 5600 },
+      { "bulbId": "bulb-4", "isOn": true, "brightness": 85, "temperature": 5600 },
+      { "bulbId": "bulb-5", "isOn": true, "brightness": 85, "temperature": 5600 },
+      { "bulbId": "bulb-6", "isOn": true, "brightness": 85, "temperature": 5600 }
+    ]
+  },
+  {
+    "id": "preset-night",
+    "name": "Night",
+    "description": "Very low warm light",
+    "actions": [
+      { "bulbId": "bulb-1", "isOn": true, "brightness": 20, "temperature": 2700 },
+      { "bulbId": "bulb-2", "isOn": true, "brightness": 12, "temperature": 2700 },
+      { "bulbId": "bulb-3", "isOn": false },
+      { "bulbId": "bulb-4", "isOn": true, "brightness": 10, "temperature": 2700 },
+      { "bulbId": "bulb-5", "isOn": false },
+      { "bulbId": "bulb-6", "isOn": false }
+    ]
+  },
+  {
+    "id": "preset-movie",
+    "name": "Movie",
+    "description": "Dim and warm",
+    "actions": [
+      { "bulbId": "bulb-1", "isOn": true, "brightness": 25, "temperature": 2800 },
+      { "bulbId": "bulb-2", "isOn": true, "brightness": 18, "temperature": 2800 },
+      { "bulbId": "bulb-3", "isOn": false },
+      { "bulbId": "bulb-4", "isOn": false },
+      { "bulbId": "bulb-5", "isOn": false },
+      { "bulbId": "bulb-6", "isOn": false }
+    ]
+  },
+  {
+    "id": "preset-cooking",
+    "name": "Cooking",
+    "description": "Bright task light",
+    "actions": [
+      { "bulbId": "bulb-1", "isOn": true, "brightness": 100, "temperature": 5000 },
+      { "bulbId": "bulb-2", "isOn": true, "brightness": 75, "temperature": 4700 },
+      { "bulbId": "bulb-3", "isOn": true, "brightness": 70, "temperature": 4700 },
+      { "bulbId": "bulb-4", "isOn": true, "brightness": 80, "temperature": 5000 },
+      { "bulbId": "bulb-5", "isOn": true, "brightness": 70, "temperature": 4700 },
+      { "bulbId": "bulb-6", "isOn": true, "brightness": 70, "temperature": 4700 }
+    ]
+  },
+  {
+    "id": "preset-all-off",
+    "name": "All Off",
+    "description": "Power down all bulbs",
+    "actions": [
+      { "bulbId": "bulb-1", "isOn": false },
+      { "bulbId": "bulb-2", "isOn": false },
+      { "bulbId": "bulb-3", "isOn": false },
+      { "bulbId": "bulb-4", "isOn": false },
+      { "bulbId": "bulb-5", "isOn": false },
+      { "bulbId": "bulb-6", "isOn": false }
+    ]
+  }
+]

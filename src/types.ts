@@ -17,3 +17,17 @@ export interface AppState {
   bulbs: BulbState[];
   mode: ControlMode;
 }
+
+export interface PresetBulbAction {
+  bulbId: string;
+  isOn?: boolean;
+  brightness?: number;
+  temperature?: number;
+}
+
+export interface PresetConfig {
+  id: string;
+  name: string;
+  description?: string;
+  actions: PresetBulbAction[];
+}
